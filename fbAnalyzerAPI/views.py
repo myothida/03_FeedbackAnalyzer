@@ -2,22 +2,15 @@ from django.shortcuts import render
 
 from .forms import feedbackForm 
 from rest_framework import viewsets 
-from rest_framework.decorators import api_view 
-from django.core import serializers 
 from rest_framework.response import Response 
 from rest_framework import status 
-from django.http import JsonResponse 
-from rest_framework.parsers import JSONParser 
 from .model import feedback 
 from .serializer import feedbackSerializers 
 
 import pickle
-import json 
 import numpy as np 
-from sklearn import preprocessing 
-import pandas as pd 
-from django.shortcuts import render, redirect 
-from django.contrib import messages 
+from googletrans import Translator
+from django.shortcuts import render 
 
 class feedbackView(viewsets.ModelViewSet): 
     queryset = feedback.objects.all() 
@@ -25,13 +18,12 @@ class feedbackView(viewsets.ModelViewSet):
 
 def status(df):
     try:        
-        input_file = 'model_C=1.0.bin'
+        input_file = './models/model_C=1.0.bin'
         with open(input_file, 'rb') as f_in: 
-            model = pickle.load(f_in)       
-        y_class = model.predict(df) 
-        y_predProb = model.predict_proba(df) 
-        result = [y_class, y_predProb]
-        return result 
+            cls = pickle.load(f_in)               
+        y_class = cls.predict([df]) 
+        y_predProb = cls.predict_proba([df]) 
+        return y_class, y_predProb
     except ValueError as e: 
         return Response(e.args[0], status.HTTP_400_BAD_REQUEST) 
 
@@ -41,10 +33,18 @@ def FormView(request):
 
         if form.is_valid():
             language = form.cleaned_data['language']
-            Feedback = form.cleaned_data['text']            
-            df=pd.DataFrame({'news':[Feedback]})
-            result = status(df)
-            return render(request, 'status.html', {"data": result[0]}) 
+            if (language =='Burmese'):
+                translator = Translator()
+                Feedback_MM = form.cleaned_data['text'] 
+                Feedback = translator.translate(Feedback_MM, src='my', dest='en')
+            else:
+                Feedback = form.cleaned_data['text']            
+            y_class, y_predProb = status(Feedback)
+            y_predProb = np.round(y_predProb[0][0],3)
+            print("Data:",  Feedback)  # Debug output
+            print("Confidence:", y_predProb)  # Debug output
+            return render(request, 'form.html', {'form':form, 
+                                                 "data":y_class[0].title(), "confidence":y_predProb}) 
             
     form=feedbackForm()
     return render(request, 'form.html', {'form':form})

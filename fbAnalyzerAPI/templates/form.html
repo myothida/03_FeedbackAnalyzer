@@ -3,13 +3,55 @@
 <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Feedback Analyzer</title>
+    <title>Online Feedback Analyzer</title>    
+    <style>
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-column {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .light-blue-button {
+            background-color: lightblue;
+            color: darkwhite;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Style the text field */
+        #id_feedback {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid lightblue;
+        }
+    </style>
 </head>
-<body> 
-    <form method='POST'>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" value="submit">Submit</button>
-    </form>
+<body>
+    <br>
+<center>
+    <h1>Automatically sort ``Open-ended survey response" into Positive, Negative or Neutral.</h1>
+</center>
+    <div class="form-container">
+        <div class="form-column">
+            <h3>Enter Your Feedback Here!</h3>
+            <form method='POST'>        
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" , class = "light-blue-button", value="submit">Classify Response</button>
+            </form>
+        </div>
+        <div class="form-column">
+            <br><br><br>
+            <h3>Results: {{data}}</h3>
+            <h4>Confidence: {{confidence}}</h4>
+        </div>
+    </div>
+
 </body>
 </html>
+

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status 
 from django.http import JsonResponse 
 from rest_framework.parsers import JSONParser 
-from .models import feedback 
+from .model import feedback 
 from .serializer import feedbackSerializers 
 
 import pickle

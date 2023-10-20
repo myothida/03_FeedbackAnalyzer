@@ -5,7 +5,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 urlpatterns = [
-                path('', views.index,name = 'index'),
+                path('', views.FormView,name = 'form'),
                 path('api/', include(router.urls)),
                 path('form/', views.FormView, name='form'),
               ]

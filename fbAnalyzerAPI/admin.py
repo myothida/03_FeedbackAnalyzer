@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import feedback
+from .model import feedback
 
 admin.site.register(feedback)

@@ -7,5 +7,5 @@ class feedbackForm(forms.ModelForm):
               fields = "__all__"
 
     language = forms.TypedChoiceField(choices=[('Eng','English'),('Burmese', 'Burmese')])
-    text = forms.CharField()
+    text = forms.CharField(max_length=1000)
     
